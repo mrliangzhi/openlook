@@ -1,0 +1,15 @@
+name: Bug report
+labels: [bug]
+body:
+  - type: textarea
+    id: repro
+    attributes: { label: Reproduction, description: Steps + expected vs actual }
+    validations: { required: true }
+  - type: input
+    id: version
+    attributes: { label: OpenLook version }
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options: [tracker, replay, ingest, dashboard, self-host]
