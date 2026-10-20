@@ -1,0 +1,33 @@
+version: "3.9"
+
+services:
+  ingest:
+    image: openlook/ingest:2.4
+    ports: ["8081:8081"]
+    environment:
+      OL_STORE_DSN: clickhouse://ch:9000/openlook
+    depends_on: [ch]
+
+  ch:
+    image: clickhouse/clickhouse-server:24.9-alpine
+    volumes: [ol-data:/var/lib/clickhouse]
+    environment:
+      CLICKHOUSE_DB: openlook
+      CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT: "1"
+
+  replay:
+    image: openlook/replay:2.4
+    environment:
+      OL_STORE_DSN: clickhouse://ch:9000/openlook
+    depends_on: [ch]
+
+  app:
+    image: openlook/app:2.4
+    ports: ["8080:80"]
+    environment:
+      OL_API_URL: http://ingest:8081
+      OL_RETENTION_DAYS: "30"
+    depends_on: [ingest, replay]
+
+volumes:
+  ol-data:
